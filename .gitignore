@@ -4,3 +4,5 @@ __pycache__/
 static/images/*
 *.db
 .vscode/
+static/images/*
+!.gitkeep
