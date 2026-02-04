@@ -1,4 +1,4 @@
-from fastapi import Depends , APIRouter , status , HTTPException
+from fastapi import Depends , APIRouter , status , HTTPException , Path
 from app.models.user import User
 from app.schemas.user import UserCreate, UserResponse
 from typing import List
@@ -22,7 +22,10 @@ async def read_all_user(db : db_dependency , current_user : admin_user):
      
 
 @router.delete("/admin_delete_user/{user_id}")
-async def delete_user( user_id : int ,  db : db_dependency , current_user : admin_user):
+async def delete_user( 
+                    db : db_dependency ,
+                    current_user : admin_user ,
+                    user_id : int = Path(gt=0) ):
     user = db.query(User).filter(User.id == user_id).first()
     if user is None :
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail="Not found , Boss")
@@ -82,7 +85,8 @@ async def login(db: db_dependency, form_data: OAuth2PasswordRequestForm = Depend
 
 
 @router.get("/{user_id}" , response_model=UserResponse )
-async def read_user(user_id : int , db : db_dependency):
+async def read_user( db : db_dependency , 
+                    user_id : int = Path(gt=0),):
     get_user = db.query(User).filter(User.id == user_id).first()
 
     if not get_user:
@@ -98,8 +102,11 @@ async def read_user(db : db_dependency):
 
 
 @router.put("/{user_id}")
-async def update_user(user_update: UserCreate, user_id: int, db: db_dependency,
-                      current_user: user_dependency ):
+async def update_user(
+                    user_update: UserCreate,
+                    db: db_dependency,
+                    current_user: user_dependency ,
+                    user_id: int =Path(gt=0),):
     
     if current_user.id != user_id:
         raise HTTPException(status_code=403, detail="You can only update your own profile")
@@ -115,6 +122,8 @@ async def update_user(user_update: UserCreate, user_id: int, db: db_dependency,
     user.first_name = user_update.first_name
     user.last_name = user_update.last_name
     user.hashed_password = get_password_hash(user_update.password) 
+    #add phone number update
+    user.phone_number = user_update.phone_number
 
     db.commit()
     db.refresh(user)
@@ -123,8 +132,9 @@ async def update_user(user_update: UserCreate, user_id: int, db: db_dependency,
 
 
 @router.delete("/{user_id}")
-async def delete_user(user_id : int , db :db_dependency ,
-                       current_user: user_dependency):
+async def delete_user( db :db_dependency ,
+                       current_user: user_dependency ,
+                       user_id : int = Path(gt=0),):
     
 
     if current_user.id != user_id:

@@ -1,25 +1,21 @@
-from pydantic import BaseModel
+from pydantic import BaseModel , Field
 from app.models.product import Product
 from typing import Optional
 
+
 class ProductBase(BaseModel):
-    name : str 
-    description : Optional[str] = None
-    price : float
-    stock : int
+    name : str = Field(min_length=3 , max_length= 45)
+    description : Optional[str] = Field(max_length=100) 
+    price : float =Field(gt=-1)
+    stock : int = Field(gt=-1)
 
 class ProductCreate(ProductBase):
     pass 
 
 class ProductResponse(ProductBase):
     id: int
-    name: str
-    price: float
-    description: Optional[str] = None
-    stock: int
     image_url: Optional[str] = None
     owner_id: Optional[int] = None
-    
+
     class Config:
-        from_attributes = True    
-    
+        from_attributes = True
