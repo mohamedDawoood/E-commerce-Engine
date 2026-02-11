@@ -1,4 +1,4 @@
-from pydantic import BaseModel , Field
+from pydantic import BaseModel, ConfigDict , Field
 from app.models.product import Product
 from typing import Optional
 
@@ -13,9 +13,9 @@ class ProductCreate(ProductBase):
     pass 
 
 class ProductResponse(ProductBase):
+    model_config = ConfigDict(from_attributes=True)
     id: int
     image_url: Optional[str] = None
     owner_id: Optional[int] = None
 
-    class Config:
-        from_attributes = True
+    

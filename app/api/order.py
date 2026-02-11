@@ -31,12 +31,13 @@ async def  place_order( order_in : OrderCreate , db : db_dependency , current_us
     db.commit()
     db.refresh(new_order)
 
-    return  {
-    "id": new_order.id,
-    "total_price": new_order.total_price,
-    "status": "Success",
-    "remaining_stock": f"{product.stock} items left"
-}
+    return {
+        "id": new_order.id,
+        "user_id": current_user.id, 
+        "total_price": new_order.total_price,
+        "status": "Success",
+        "remaining_stock": f"{product.stock} items left"
+    }
 
 
 

@@ -47,7 +47,7 @@ async def create_product(
     
     return {"message": "Product created successfully", "product": new_product}
 
-@router.get("/{read_product}/", response_model= ProductResponse)
+@router.get("/{product_id}", response_model= ProductResponse)
 async def read_product(db : db_dependency ,product_id : int =Path(gt=0) ):
 
     product = db.query(Product).filter(Product.id == product_id).first() 
@@ -115,29 +115,20 @@ async def update_product(product_update: ProductCreate,
 
 @router.delete("/{product_id}")
 async def delete_product(
-                        db : db_dependency ,
-                        current_user : user_dependency ,
-                         product_id : int  = Path(gt=0) , ):
+    db: db_dependency,
+    current_user: user_dependency, 
+    product_id: int = Path(gt=0)):
+    
     product = db.query(Product).filter(Product.id == product_id).first()
     
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
-    
+
+
     if product.owner_id != current_user.id and current_user.role != "admin":
-        raise HTTPException(
-            status_code=403,
-            detail="You are not authorized to delete this product"
-    )
-    
-    if  product.owner_id != current_user.id:
-        raise HTTPException(status_code= 403 ,
-                        detail="You are not authorized to delete this product" )
+        raise HTTPException(status_code=403, detail="You are not authorized to delete this product")
     
     db.delete(product)
     db.commit()
-
-    return {"message" : "the product has been deleted"}
-
-
-
-
+    
+    return {"message": "the product has been deleted"}
