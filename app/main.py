@@ -16,12 +16,17 @@ app = FastAPI(title="E-commerce Engine")
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 static_path = BASE_DIR / "static"
+if not static_path.exists():
+    static_path = Path("static")
+
 templates_path = BASE_DIR / "templates"
+if not templates_path.exists():
+    templates_path = Path("templates")
 
 if static_path.exists():
     app.mount("/static", StaticFiles(directory=str(static_path)), name="static")
 else:
-    print(f"⚠️ Warning: Static folder not found at {static_path}")
+    print(f"⚠️ Warning: Static folder not found at {static_path.absolute()}")
 
 templates = Jinja2Templates(directory=str(templates_path))
 
