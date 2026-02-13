@@ -1,10 +1,10 @@
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 import random
 
-# مثال للإعدادات الصحيحة
+
 conf = ConnectionConfig(
     MAIL_USERNAME = "your_email@gmail.com",
-    MAIL_PASSWORD = "abcd efgh ijkl mnop", # الباسورد الـ 16 حرف اللي طلعته من جوجل (بدون مسافات أو بمسافات هيشتغل)
+    MAIL_PASSWORD = "abcd efgh ijkl mnop", 
     MAIL_FROM = "your_email@gmail.com",
     MAIL_PORT = 587,
     MAIL_SERVER = "smtp.gmail.com",

@@ -17,7 +17,6 @@ from app.core.security import (
 from app.api.deps import user_dependency, admin_user
 from app.core.email import send_verification_email
 
-# إعدادات المسارات والـ Templates
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
 
@@ -89,7 +88,7 @@ async def signup(user_in: UserCreate, db: db_dependency):
         first_name=user_in.first_name,
         last_name=user_in.last_name,
         hashed_password=hashed_pwd,
-        role="user"  # القيمة الافتراضية
+        role="user"  
     )
     db.add(new_user)
     db.commit()

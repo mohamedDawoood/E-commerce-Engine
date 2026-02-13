@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -12,20 +13,17 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="E-commerce Engine")
 
-# تحديد مسار المجلد الرئيسي للمشروع (اللي فيه app و templates و static)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = Path(__file__).resolve().parent.parent
 
-# ربط المجلدات من المسار الرئيسي بره فولدر app
-static_path = os.path.join(BASE_DIR, "static")
-templates_path = os.path.join(BASE_DIR, "templates")
+static_path = BASE_DIR / "static"
+templates_path = BASE_DIR / "templates"
 
-# التأكد من وجود المجلدات قبل الـ Mount
-if os.path.exists(static_path):
-    app.mount("/static", StaticFiles(directory=static_path), name="static")
+if static_path.exists():
+    app.mount("/static", StaticFiles(directory=str(static_path)), name="static")
 else:
-    print(f"Error: Static folder not found at {static_path}")
+    print(f"⚠️ Warning: Static folder not found at {static_path}")
 
-templates = Jinja2Templates(directory=templates_path)
+templates = Jinja2Templates(directory=str(templates_path))
 
 app.include_router(product_router.router)
 app.include_router(user_router.router)
