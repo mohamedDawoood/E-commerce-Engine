@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CORE | Secure Access</title>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.321.0/dist/umd/lucide.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap');
+        :root {
+            --primary: #ff0033;
+            --primary-glow: rgba(255, 0, 51, 0.3);
+            --bg: #050505;
+            --card: #0d0d0d;
+            --border: rgba(255, 255, 255, 0.08);
+            --text-main: #ffffff;
+            --text-muted: #a1a1aa;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: var(--bg);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: radial-gradient(circle at bottom, #1a0505 0%, #050505 80%);
+            overflow: hidden;
+        }
+        .login-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 32px;
+            padding: 48px;
+            width: 100%;
+            max-width: 440px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .header { text-align: center; margin-bottom: 40px; }
+        .header h1 { font-size: 2.8rem; font-weight: 800; letter-spacing: -2px; line-height: 1; }
+        .header h1 span { color: var(--primary); text-shadow: 0 0 20px var(--primary-glow); }
+        .header p { color: var(--text-muted); font-size: 15px; margin-top: 10px; }
+        .input-group { position: relative; margin-bottom: 20px; }
+        .input-group i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); width: 18px; color: var(--text-muted); transition: 0.3s; }
+        input {
+            width: 100%; background: #000; border: 1px solid var(--border);
+            border-radius: 16px; padding: 16px 16px 16px 52px;
+            color: white; font-size: 15px; transition: all 0.3s ease; outline: none;
+        }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(255, 0, 51, 0.1); }
+        input:focus + i { color: var(--primary); }
+        .btn-login {
+            width: 100%; background: var(--primary); color: white; border: none;
+            border-radius: 16px; padding: 18px; font-weight: 700; font-size: 16px;
+            cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 12px;
+        }
+        .btn-login:disabled { opacity: 0.6; cursor: not-allowed; }
+        #msg { min-height: 24px; margin-top: 24px; font-size: 14px; text-align: center; font-weight: 500; }
+        .spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; border-top-color: white; animation: spin 0.8s linear infinite; display: none; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .footer { margin-top: 32px; text-align: center; font-size: 14px; color: var(--text-muted); }
+        .footer a { color: white; text-decoration: none; font-weight: 700; }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <div class="header">
+            <h1>CORE<span>.</span></h1>
+            <p>Authorized Personnel Only</p>
+        </div>
+
+        <form id="loginForm">
+            <div class="input-group">
+                <input type="text" id="username" placeholder="Username" required>
+                <i data-lucide="shield"></i>
+            </div>
+            <div class="input-group">
+                <input type="password" id="password" placeholder="Password" required>
+                <i data-lucide="key-round"></i>
+            </div>
+            <button type="submit" id="submitBtn" class="btn-login">
+                <span id="btnText">Execute Login</span>
+                <div class="spinner" id="loader"></div>
+            </button>
+        </form>
+
+        <div id="msg"></div>
+        <div class="footer">Don't have an account? <a href="/users/signup">Register</a></div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        const loginForm = document.getElementById('loginForm');
+        const msgDisplay = document.getElementById('msg');
+        const submitBtn = document.getElementById('submitBtn');
+        const loader = document.getElementById('loader');
+        const btnText = document.getElementById('btnText');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // بداية حالة التحميل
+            submitBtn.disabled = true;
+            loader.style.display = "block";
+            btnText.innerText = "Verifying...";
+            msgDisplay.innerText = "";
+
+            const params = new URLSearchParams();
+            params.append('username', document.getElementById('username').value);
+            params.append('password', document.getElementById('password').value);
+
+            try {
+                // طلب تسجيل الدخول
+                const response = await fetch('/users/login', { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: params 
+                });
+                
+                const data = await response.json();
+
+                if (response.ok) {
+                    // تخزين البيانات
+                    localStorage.setItem('token', data.access_token);
+                    localStorage.setItem('role', data.role);
+
+                    msgDisplay.style.color = "#00ff88";
+                    msgDisplay.innerText = "Access Granted. Initializing Session...";
+
+                    // التوجيه الذكي
+                    setTimeout(() => {
+                        if (data.role === 'admin') {
+                            window.location.href = '/users/dashboard';
+                        } else {
+                            window.location.href = '/products/view';
+                        }
+                    }, 500); 
+                } else {
+                    throw new Error(data.detail || "Invalid Credentials");
+                }
+            } catch (err) {
+                submitBtn.disabled = false;
+                loader.style.display = "none";
+                btnText.innerText = "Execute Login";
+                msgDisplay.style.color = "#ef4444";
+                msgDisplay.innerText = err.message;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CORE | Create Account</title>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.321.0/dist/umd/lucide.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap');
+
+        :root {
+            --primary: #ff0033;
+            --primary-glow: rgba(255, 0, 51, 0.25);
+            --bg: #050505;
+            --card: #0f0f0f;
+            --border: rgba(255, 255, 255, 0.08);
+            --text-main: #ffffff;
+            --text-muted: #888;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: radial-gradient(circle at top, #1a0505 0%, #050505 70%);
+        }
+
+        .signup-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header { text-align: center; margin-bottom: 35px; }
+        .header h1 { font-size: 2.2rem; font-weight: 800; letter-spacing: -1.5px; }
+        .header h1 span { color: var(--primary); }
+        .header p { color: var(--text-muted); font-size: 14px; margin-top: 5px; }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .full-width { grid-column: span 2; }
+
+        .input-group { position: relative; }
+        .input-group label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            margin-left: 5px;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 38px;
+            width: 18px;
+            color: #444;
+            transition: 0.3s;
+        }
+
+        input {
+            width: 100%;
+            background: #000;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 14px 14px 14px 45px;
+            color: white;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        input:focus + i { color: var(--primary); }
+
+        .btn-submit {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            padding: 16px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px var(--primary-glow);
+            filter: brightness(1.1);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .footer a { color: white; text-decoration: none; font-weight: 700; }
+        .footer a:hover { color: var(--primary); }
+
+        #msg { margin-top: 15px; text-align: center; font-size: 13px; font-weight: 600; }
+
+        @media (max-width: 480px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .full-width { grid-column: span 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="signup-card">
+        <div class="header">
+            <h1>CORE<span>.</span></h1>
+            <p>Create your account to start trading</p>
+        </div>
+
+        <form id="signupForm" class="form-grid">
+            <div class="input-group">
+                <label>First Name</label>
+                <input type="text" name="first_name" placeholder="John" required>
+                <i data-lucide="user"></i>
+            </div>
+
+            <div class="input-group">
+                <label>Last Name</label>
+                <input type="text" name="last_name" placeholder="Doe" required>
+                <i data-lucide="user"></i>
+            </div>
+
+            <div class="input-group full-width">
+                <label>Username</label>
+                <input type="text" name="username" placeholder="johndoe123" required>
+                <i data-lucide="at-sign"></i>
+            </div>
+
+            <div class="input-group full-width">
+                <label>Email Address</label>
+                <input type="email" name="email" placeholder="name@email.com" required>
+                <i data-lucide="mail"></i>
+            </div>
+
+            <div class="input-group full-width">
+                <label>Password</label>
+                <input type="password" name="password" placeholder="Min. 8 characters" required>
+                <i data-lucide="lock"></i>
+            </div>
+
+            <button type="submit" class="btn-submit full-width">
+                Create Account
+                <i data-lucide="arrow-right" style="width: 18px;"></i>
+            </button>
+        </form>
+
+        <div id="msg"></div>
+
+        <div class="footer">
+            Already have an account? <a href="/users/login">Sign In</a>
+        </div>
+    </div>
+
+    <script>
+        // تفعيل الأيقونات
+        lucide.createIcons();
+
+        const form = document.getElementById('signupForm');
+        const msg = document.getElementById('msg');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            msg.style.color = "#888";
+            msg.innerText = "Processing registration...";
+            
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const res = await fetch('/users/signup', { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await res.json();
+                
+                if (res.ok) {
+                    msg.style.color = "#28a745";
+                    msg.innerText = "Account created! Redirecting to login...";
+                    setTimeout(() => window.location.href = '/users/login', 2000);
+                } else {
+                    msg.style.color = "#ff0033";
+                    // عرض أول خطأ في الـ Validation لليوزر بشكل مفهوم
+                    const errorDetail = Array.isArray(result.detail) ? result.detail[0].msg : result.detail;
+                    msg.innerText = "Error: " + errorDetail;
+                    console.log("Full Error:", result.detail);
+                }
+            } catch (err) {
+                msg.style.color = "#ff0033";
+                msg.innerText = "Connection error. Please try again.";
+            }
+        });
+    </script>
+</body>
+</html>

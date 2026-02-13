@@ -7,6 +7,8 @@ class Order(Base):
     id = Column( Integer , primary_key=True , index= True )
     created_at = Column(DateTime , server_default=func.now() )
     total_price =Column (Float , nullable= False)
+    ### Success , Cancelled
+    status = Column(String, default="Success")
     user_id =Column (Integer , ForeignKey("users.id") , nullable= False)
 
     user = relationship("User", back_populates="orders")

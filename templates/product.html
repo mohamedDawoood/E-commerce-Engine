@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CORE | Community Exchange</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* ... (نفس الستايل القديم) ... */
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
+        
+        :root {
+            --primary: #ff0033;
+            --primary-glow: rgba(255, 0, 51, 0.4);
+            --bg: #050505;
+            --card: rgba(18, 18, 18, 0.7);
+            --border: rgba(255, 255, 255, 0.08);
+            --text-main: #ffffff;
+            --text-muted: #888;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); background-image: radial-gradient(circle at 50% -20%, #1a0505 0%, #050505 80%); color: var(--text-main); font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 30px 20px; }
+
+        /* Stat Bar الجديد */
+        .stats-bar {
+            display: flex; gap: 20px; margin-bottom: 25px;
+        }
+        .stat-item {
+            background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+            padding: 15px 25px; border-radius: 20px; display: flex; align-items: center; gap: 12px;
+        }
+        .stat-value { font-weight: 800; font-size: 1.2rem; color: var(--primary); }
+        .stat-label { color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
+
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: rgba(255,255,255,0.03); padding: 15px 25px; border-radius: 24px; border: 1px solid var(--border); backdrop-filter: blur(10px); }
+        .logo h1 { font-size: 1.6rem; font-weight: 800; letter-spacing: -1px; }
+        .logo span { color: var(--primary); text-shadow: 0 0 10px var(--primary-glow); }
+        .nav-actions { display: flex; gap: 12px; align-items: center; }
+        .search-wrapper { position: relative; width: 400px; }
+        .search-wrapper i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 18px; }
+        .search-wrapper input { width: 100%; background: #000; border: 1px solid var(--border); padding: 12px 12px 12px 48px; border-radius: 16px; color: white; transition: 0.3s; }
+        .search-wrapper input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 20px rgba(255, 0, 51, 0.15); }
+        .btn-icon { background: transparent; border: 1px solid var(--border); color: white; padding: 10px 20px; border-radius: 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.3s; font-weight: 600; }
+        .btn-icon:hover { background: rgba(255,255,255,0.05); border-color: white; transform: translateY(-2px); }
+        .btn-primary { background: var(--primary); border: none; }
+
+        /* Grid & Cards */
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
+        .product-card { background: var(--card); border: 1px solid var(--border); border-radius: 28px; overflow: hidden; transition: 0.5s; backdrop-filter: blur(5px); position: relative; }
+        .product-card:hover { transform: translateY(-10px); border-color: rgba(255,255,255,0.2); }
+        .img-container { position: relative; width: 100%; height: 240px; overflow: hidden; }
+        .product-img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+        
+        /* Stock Badge المعدل */
+        .stock-badge {
+            position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(5px); padding: 6px 14px; border-radius: 12px;
+            font-size: 11px; font-weight: 800; border: 1px solid var(--border);
+            color: var(--text-main);
+        }
+        .stock-count { color: var(--primary); margin-left: 5px; }
+
+        .product-content { padding: 22px; }
+        .product-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+        .product-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 15px; }
+        
+        .stock-info { font-size: 0.75rem; font-weight: 600; color: #555; margin-bottom: 10px; display: flex; align-items: center; gap: 5px; }
+        
+        .product-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 15px; border-top: 1px solid var(--border); }
+        .price-tag { font-size: 1.5rem; font-weight: 800; color: #fff; }
+        .price-tag span { font-size: 0.9rem; color: var(--primary); }
+        .btn-buy { background: #fff; color: #000; border: none; padding: 10px 20px; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.3s; }
+        .btn-buy:hover { background: var(--primary); color: #fff; }
+        .btn-buy:disabled { background: #222; color: #444; cursor: not-allowed; }
+
+        /* باقي الستايلات (Sidebar/Modal) كما هي في كودك الأصلي */
+        .orders-sidebar { position: fixed; top: 0; right: -450px; width: 420px; height: 100%; background: rgba(5, 5, 5, 0.95); backdrop-filter: blur(30px); border-left: 1px solid var(--border); z-index: 2000; transition: 0.6s; padding: 40px; }
+        .orders-sidebar.active { right: 0; }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; z-index: 3000; }
+        .modal-box { background: #0d0d0d; padding: 40px; border-radius: 32px; width: 100%; max-width: 500px; border: 1px solid var(--border); }
+        input, textarea { width: 100%; background: #000; border: 1px solid var(--border); padding: 15px; border-radius: 14px; color: white; margin-top: 10px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo"><h1>CORE<span>.</span></h1></div>
+            <div class="search-wrapper">
+                <i data-lucide="search"></i>
+                <input type="text" id="searchInput" placeholder="Search community items..." onkeyup="loadProducts()">
+            </div>
+            <div class="nav-actions">
+                <a href="/users/profile" class="btn-icon" title="My Profile"><i data-lucide="user"></i> Identity</a>
+                <button class="btn-icon" onclick="toggleOrders()"><i data-lucide="zap"></i> My Deals</button>
+                <button class="btn-icon btn-primary" onclick="openModal()"><i data-lucide="plus"></i> List Item</button>
+            </div>
+        </header>
+
+        <div class="stats-bar">
+            <div class="stat-item">
+                <i data-lucide="layers" style="color:var(--primary)"></i>
+                <div>
+                    <div class="stat-value" id="totalItemsCount">0</div>
+                    <div class="stat-label">Total Listings</div>
+                </div>
+            </div>
+            <div class="stat-item">
+                <i data-lucide="package-check" style="color:#00ff88"></i>
+                <div>
+                    <div class="stat-value" id="activeItemsCount">0</div>
+                    <div class="stat-label">In Stock</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="products-grid" id="productsGrid">
+            </div>
+    </div>
+
+    <div class="orders-sidebar" id="ordersSidebar">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h2 style="font-weight: 800; font-size: 1.8rem;">Activity Log</h2>
+            <button onclick="toggleOrders()" style="background:none; border:none; color:white; cursor:pointer;"><i data-lucide="x"></i></button>
+        </div>
+        <div id="ordersList"></div>
+    </div>
+
+    <div class="modal" id="productModal">
+        <div class="modal-box">
+            <h2 style="margin-bottom: 20px;">Deploy New Item</h2>
+            <form id="productForm">
+                <input type="text" name="name" placeholder="What are you selling?" required>
+                <input type="number" step="0.01" name="price" placeholder="Price ($)" required>
+                <textarea name="description" placeholder="Short description..."></textarea>
+                <input type="number" name="stock" placeholder="Quantity Available" value="1" required>
+                <input type="file" name="file" required>
+                <div style="display: flex; gap: 12px;">
+                    <button type="button" onclick="closeModal()" style="flex:1; background:none; border:1px solid #333; color:white; border-radius:14px; cursor:pointer;">Cancel</button>
+                    <button type="submit" style="flex:2; background:var(--primary); color:white; border:none; border-radius:14px; font-weight:800; cursor:pointer;">LIST NOW</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        async function loadProducts() {
+            const search = document.getElementById('searchInput').value;
+            const url = search ? `/products/?search=${search}` : '/products/';
+            try {
+                const res = await fetch(url);
+                const products = await res.json();
+                const grid = document.getElementById('productsGrid');
+                
+                // تحديث الـ Stats Bar
+                document.getElementById('totalItemsCount').innerText = products.length;
+                const activeCount = products.filter(p => p.stock > 0).length;
+                document.getElementById('activeItemsCount').innerText = activeCount;
+
+                grid.innerHTML = products.map(p => `
+                    <div class="product-card">
+                        <div class="img-container">
+                            <img src="/${p.image_url}" class="product-img" onerror="this.src='https://via.placeholder.com/400x300/111/333?text=NO+IMAGE'">
+                            <div class="stock-badge">
+                                ${p.stock > 0 ? 'AVAILABLE' : '<span style="color:#ff4444">OUT OF STOCK</span>'}
+                                ${p.stock > 0 ? `<span class="stock-count">(${p.stock})</span>` : ''}
+                            </div>
+                        </div>
+                        <div class="product-content">
+                            <h3 class="product-title">${p.name}</h3>
+                            <p class="product-desc">${p.description || 'Verified Community Exchange Item.'}</p>
+                            
+                            <div class="stock-info">
+                                <i data-lucide="box" size="14"></i> 
+                                ${p.stock} units remaining
+                            </div>
+
+                            <div class="product-footer">
+                                <div class="price-tag"><span>$</span>${p.price}</div>
+                                <button class="btn-buy" 
+                                    onclick="createOrder(${p.id})" 
+                                    ${p.stock <= 0 ? 'disabled' : ''}>
+                                    ${p.stock > 0 ? 'BUY NOW' : 'SOLD'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                lucide.createIcons(); // لتحديث أيقونات البوكس الجديدة
+            } catch (err) { console.error("Load failed"); }
+        }
+
+        // ... (باقي الدوال كما هي: createOrder, fetchOrders, etc.) ...
+        async function createOrder(pid) {
+            const token = localStorage.getItem('token');
+            if (!token) { alert("Please login to trade."); return; }
+            
+            const res = await fetch('/orders/', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ product_id: pid, quantity: 1 })
+            });
+
+            if (res.ok) {
+                alert("✅ Transaction Successful!");
+                loadProducts(); // إعادة تحميل المنتجات لتحديث الـ Stock
+                if(document.getElementById('ordersSidebar').classList.contains('active')) fetchOrders();
+            } else {
+                const err = await res.json();
+                alert("❌ Error: " + err.detail);
+            }
+        }
+
+        function toggleOrders() {
+            const s = document.getElementById('ordersSidebar');
+            s.classList.toggle('active');
+            if (s.classList.contains('active')) fetchOrders();
+        }
+
+        async function fetchOrders() {
+            const token = localStorage.getItem('token');
+            const list = document.getElementById('ordersList');
+            list.innerHTML = "<p style='text-align:center; color:#444;'>Syncing Data...</p>";
+            try {
+                const res = await fetch('/orders/me', { headers: { 'Authorization': `Bearer ${token}` } });
+                const orders = await res.json();
+                if (orders.length === 0) { list.innerHTML = "<p style='text-align:center; color:#444; margin-top:50px;'>No activity found.</p>"; return; }
+                list.innerHTML = orders.map(o => `
+                    <div class="order-item">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                            <span style="font-size:10px; color:var(--primary); font-weight:800;">ID #${o.id}</span>
+                            <span style="font-size:10px; color:#666;">${o.status}</span>
+                        </div>
+                        <div style="font-size:1.4rem; font-weight:800;">$${o.total_price}</div>
+                    </div>
+                `).join('');
+            } catch (e) { list.innerHTML = "Auth Error"; }
+        }
+
+        function openModal() { document.getElementById('productModal').style.display='flex'; }
+        function closeModal() { document.getElementById('productModal').style.display='none'; }
+        
+        document.getElementById('productForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const fd = new FormData(e.target);
+            const res = await fetch('/products/', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+                body: fd
+            });
+            if(res.ok) { closeModal(); loadProducts(); e.target.reset(); }
+        };
+
+        loadProducts();
+    </script>
+</body>
+</html>

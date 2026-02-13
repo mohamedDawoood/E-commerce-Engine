@@ -44,4 +44,30 @@ async def  place_order( order_in : OrderCreate , db : db_dependency , current_us
 @router.get("/me" , response_model= List[OrderResponse])
 async def get_my_orders(db : db_dependency , current_user : user_dependency):
     all_my_orders = db.query(Order).filter(Order.user_id == current_user.id).all()
+    for o in all_my_orders:
+        if not o.status:
+            o.status = "Success"
     return all_my_orders
+
+
+@router.delete("/{order_id}")
+async def delete_order(order_id: int, db: db_dependency, current_user: user_dependency):
+
+    order = db.query(Order).filter(Order.id == order_id).first()
+    
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+
+    if order.user_id != current_user.id and current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Not authorized to delete this order")
+
+
+    for item in order.order_items:
+        product = db.query(Product).filter(Product.id == item.product_id).first()
+        if product:
+            product.stock += item.quantity  
+    db.delete(order)
+    db.commit()
+
+    return {"message": "Order deleted and stock restored successfully"}

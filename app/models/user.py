@@ -15,6 +15,8 @@ class User(Base):
     role =Column (String , default="user")
     #add new column 
     phone_number = Column(Integer , nullable= True)
+    ##add new column for otp code
+    otp_code = Column(String, nullable=True)
     is_active =Column(Boolean , default=True)
 
     orders = relationship("Order", back_populates="user")

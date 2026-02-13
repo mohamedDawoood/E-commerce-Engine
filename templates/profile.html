@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Settings</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap');
+        
+        :root {
+            --primary: #ff0033;
+            --bg-color: #0a0a0a;
+            --card-bg: #141414;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --text-color: #ffffff;
+            --text-muted: #a0a0a0;
+        }
+
+        body { 
+            background: var(--bg-color); 
+            color: var(--text-color); 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            margin: 0; padding: 20px;
+            display: flex; justify-content: center; align-items: center; min-height: 100vh;
+        }
+
+        .container {
+            width: 100%; max-width: 850px;
+            display: grid; grid-template-columns: 300px 1fr; gap: 30px;
+        }
+
+        /* Profile Side Card */
+        .profile-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 24px; padding: 30px; text-align: center;
+        }
+
+        .avatar {
+            width: 90px; height: 90px; background: var(--primary);
+            border-radius: 24px; margin: 0 auto 15px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; font-weight: 700;
+        }
+
+        .user-info h2 { margin: 10px 0 5px; font-size: 1.4rem; }
+        .user-info p { color: var(--text-muted); font-size: 14px; margin: 0; }
+
+        .stats {
+            display: flex; justify-content: space-around;
+            margin-top: 25px; padding-top: 20px; border-top: 1px solid var(--border-color);
+        }
+        .stat-item span { display: block; font-weight: 700; font-size: 1.1rem; }
+        .stat-item label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; }
+
+        /* Settings Side */
+        .settings-panel {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 24px; padding: 35px;
+        }
+
+        .settings-panel h3 { margin-bottom: 25px; font-size: 1.2rem; display: flex; align-items: center; gap: 10px; }
+
+        .form-group { margin-bottom: 20px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        
+        label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+        input {
+            width: 100%; background: #000; border: 1px solid var(--border-color);
+            padding: 12px; border-radius: 12px; color: white; outline: none; box-sizing: border-box;
+        }
+        input:focus { border-color: var(--primary); }
+        input:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .actions { margin-top: 30px; display: flex; gap: 10px; }
+        .btn {
+            padding: 12px 20px; border-radius: 12px; border: none; font-weight: 600;
+            cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 8px;
+        }
+        .btn-save { background: var(--primary); color: white; flex: 1; justify-content: center; }
+        .btn-back { background: #222; color: white; text-decoration: none; }
+
+        .logout-btn {
+            margin-top: 20px; color: #ff4d4d; background: none; border: none;
+            cursor: pointer; font-size: 13px; font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .container { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="profile-card">
+            <div class="avatar" id="userInitial">U</div>
+            <div class="user-info">
+                <h2 id="nameTag">Username</h2>
+                <p id="emailTag">user@email.com</p>
+            </div>
+            
+            <div class="stats">
+                <div class="stat-item">
+                    <span id="itemsCount">0</span>
+                    <label>Items</label>
+                </div>
+                <div class="stat-item">
+                    <span id="ordersCount">0</span>
+                    <label>Orders</label>
+                </div>
+            </div>
+
+            <button class="logout-btn" onclick="logout()">
+                <i data-lucide="log-out" style="width: 14px;"></i> Log Out
+            </button>
+        </div>
+
+        <div class="settings-panel">
+            <h3><i data-lucide="user"></i> Edit Profile</h3>
+            
+            <form id="profileForm">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="username" disabled>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>First Name</label>
+                        <input type="text" id="firstName" placeholder="First Name">
+                    </div>
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        <input type="text" id="lastName" placeholder="Last Name">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="email" placeholder="Email">
+                </div>
+
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="text" id="phone" placeholder="Phone Number">
+                </div>
+
+                <div class="actions">
+                    <a href="/products/view" class="btn btn-back">Back</a>
+                    <button type="submit" class="btn btn-save">Save Changes</button>
+                </div>
+            </form>
+            <p id="msg" style="text-align: center; margin-top: 15px; font-size: 13px;"></p>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        const token = localStorage.getItem('token');
+
+        async function loadProfile() {
+            if (!token) { window.location.href = '/users/login'; return; }
+
+            try {
+                const res = await fetch('/users/', { headers: { 'Authorization': `Bearer ${token}` } });
+                const users = await res.json();
+                const user = users[0]; // Assuming first user is current user
+
+                // UI Fill
+                document.getElementById('username').value = user.username;
+                document.getElementById('nameTag').innerText = user.username;
+                document.getElementById('emailTag').innerText = user.email;
+                document.getElementById('email').value = user.email;
+                document.getElementById('firstName').value = user.first_name || '';
+                document.getElementById('lastName').value = user.last_name || '';
+                document.getElementById('phone').value = user.phone_number || '';
+                document.getElementById('userInitial').innerText = user.username[0].toUpperCase();
+
+                // Orders Count
+                const orderRes = await fetch('/orders/me', { headers: { 'Authorization': `Bearer ${token}` } });
+                const orders = await orderRes.json();
+                document.getElementById('ordersCount').innerText = orders.length;
+
+            } catch (err) { console.error("Error loading profile"); }
+        }
+
+        document.getElementById('profileForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const msg = document.getElementById('msg');
+            msg.innerText = "Saving...";
+            msg.style.color = "white";
+
+            const data = {
+                username: document.getElementById('username').value,
+                first_name: document.getElementById('firstName').value,
+                last_name: document.getElementById('lastName').value,
+                email: document.getElementById('email').value,
+                phone_number: document.getElementById('phone').value,
+                password: "string" 
+            };
+
+            try {
+                const res = await fetch(`/users/me`, { 
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (res.ok) {
+                    msg.innerText = "Profile updated successfully!";
+                    msg.style.color = "#28a745";
+                } else {
+                    msg.innerText = "Failed to update profile.";
+                    msg.style.color = "#ff0033";
+                }
+            } catch (err) { msg.innerText = "Server error."; }
+        };
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = '/users/login';
+        }
+
+        loadProfile();
+    </script>
+</body>
+</html>
